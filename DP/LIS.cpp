@@ -1,41 +1,39 @@
 #include <iostream>
-
-int binary_s(int*,int,int);
+#include<vector>
+#include<cstring>
+#include<algorithm>
 using namespace std;
 int main()
 {
     int n;
     cin >> n;
-    int ss[n];
-    int low[n];
+    int ss[n+1];
     for (int i = 0; i < n; ++i){
         cin >> ss[i];
-        low[i]=0x7fffffff;
     }
-    low[0]=ss[0];
-
+    vector<int> save;
+    save.reserve(n+1);
+    
+    int l[n+1];
+    int state[n+1];
+    //memset(save,0x7f,sizeof(save));
+    memset(l,0,sizeof(l));
+    memset(state,0,sizeof(state));
+    save[0]=0;
     int ans=0;
-    for(int i=1;i<n;++i){
-        if(ss[i]>low[ans]){ 
-            low[++ans]=ss[i];
+    for(int i=0;i<n;++i){
+        if(ss[i]>save[ans]){
+            save[++ans]=ss[i];
+            l[i]=ans;
+            state[i]+=1;
         }else{
-            low[binary_s(low,ans,ss[i])]=ss[i];
+            int temp=(int)(upper_bound(save.begin(),save.begin()+ans,ss[i])-save.begin());
+            //cout<<temp<<endl;
+            save[temp]=ss[i];
         }
     }
 
-    cout<<ans+1<<endl;
+    cout<<ans<<endl;
     return 0;
 
-}
-int binary_s(int *a,int r,int x){
-    int l=0;
-    int mid;
-    while(l<=r){
-        mid=(l+r)>>1;
-        if(a[mid]<=x)
-        l=mid+1;
-        else r=mid-1;
-
-    }
-    return l;
 }
