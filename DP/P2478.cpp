@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <vector>
 #include <stack>
+#include<unordered_set>
 #include <algorithm>
 using namespace std;
 
@@ -19,15 +20,15 @@ int main()
     s[0] = 0x7fffffff;
     ss[n + 1] = 0;
     s[n + 1] = 0;
-    int save[n + 2] = {0};
+    double save[n + 2] = {0};
     vector<int> source[n + 2];
+    unordered_set<int> sou[n+2];
     double count[n + 2] = {0};
-    int state[n + 2] = {0};
-    int maxs = 0;
+    double maxs = 0;
     count[0] = 1;
     for (int i = 1; i <= n + 1; ++i)
     {
-        int temp = 0;
+        double temp = 0;
         for (int j = 0; j < i; ++j)
         {
             if (ss[i] <= ss[j] && s[i] <= s[j])
@@ -38,8 +39,8 @@ int main()
             if (ss[i] <= ss[j] && s[i] <= s[j] && save[j] == temp)
             {
                 source[i].push_back(j);
+                sou[j].insert(i);
                 count[i] += count[j];
-                state[j] = 1;
             }
         }
         save[i] = temp + 1;
@@ -48,7 +49,8 @@ int main()
     cout << maxs - 1 << endl;
     int temp = 0;
     double ans = count[n + 1];
-
+    stack<int> as;
+    
     for (int i = 1; i <= n; ++i)
     {
         if (state[i])
