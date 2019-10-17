@@ -4,7 +4,7 @@
 #include<vector>
 #include<algorithm>
 using namespace std;
-
+//最长公共子序列
 int main()
 {
     int n;
