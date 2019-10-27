@@ -3,10 +3,11 @@
 #include <string.h>
 
 using namespace std;
-//伪三维 差分
+//伪三维 差分，前缀和的前缀和
 int update(int save[][2501], int x, int y, int b, int n);
 int suma(int save[][2501], int x, int y);
 int save[31][2501][2501];
+int savea[31][2501][2501];
 int main() {
   int n, m;
   int x, y, xx, yy;
@@ -19,16 +20,16 @@ int main() {
     if (temp == 'P') {
       scanf("%d %d %d %d %d", &x, &y, &xx, &yy, &k);
       while (scanf("%d %d", &a, &b)) {
-        update(save[a], x, y, b , n);
-        update(save[a], x, yy + 1, -b , n);
-        update(save[a], xx + 1, y, -b , n);
-        update(save[a], xx + 1, yy + 1, b, n);
+        update(save[a], x, y, b&1 , n);
+        update(save[a], x, yy + 1, b&1 , n);
+        update(save[a], xx + 1, y, b&1 , n);
+        update(save[a], xx + 1, yy + 1, b&1, n);
       }
     } else if (temp == 'Q') {
       scanf("%d %d %d %d", &x, &y, &xx, &yy);
       for (int j = 1; j <= 30; ++j) {
-        printf("%d", suma(save[i], xx, yy) + suma(save[i], x - 1, y - 1) -
-                         suma(save[i], x - 1, yy) -
+        printf("%d", suma(save[i], xx, yy) ^ suma(save[i], x - 1, y - 1) ^
+                         suma(save[i], x - 1, yy) ^
                          -suma(save[i], xx, y - 1) );
       }
       printf("\n");
