@@ -29,8 +29,6 @@ int saveb[100005];
 int acount = 0;
 int bcount = 0;
 int main() {
-  freopen("C:\\Users\\32125\\Documents\\vscodec\\bingchaji\\testdata.in", "r",
-          stdin);
   int t;
   int n, h, r;
   cin >> t;
