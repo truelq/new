@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
-// https://www.luogu.org/problem/P3372
-// 线段树基础
+#include<unordered_map>
+//离散化
+using namespace std;
 struct Node {
   int l, r;
   long long sum;
@@ -8,20 +9,20 @@ struct Node {
 
   int mid() { return (l + r) >> 1; }
 };
-struct Tree {//只包含一个区间和数据项
-  Node tree[400004];//4n
+struct Tree {         //只包含一个区间和数据项
+  Node tree[4000004]; // 4n
   int root = 1;
   int end;
-  void buildtree(int root, int l, int r, long long *ss) {
+  void buildtree(int root, int l, int r) {
     this->tree[root].l = l;
     this->tree[root].r = r;
     if (l == r) {
-      tree[root].sum = ss[l];
+      tree[root].sum = 0;
       return;
     }
-    buildtree(root << 1, l, tree[root].mid(), ss);
-    buildtree((root << 1) + 1, tree[root].mid() + 1, r, ss);
-    tree[root].sum = tree[root << 1].sum + tree[(root << 1) + 1].sum;
+    buildtree(root << 1, l, tree[root].mid());
+    buildtree((root << 1) + 1, tree[root].mid() + 1, r);
+    tree[root].sum = 0;
   }
   void update(int root, int l, int r, long long k) {
     if (l == tree[root].l && r == tree[root].r) {
@@ -67,27 +68,44 @@ struct Tree {//只包含一个区间和数据项
   }
 } tree;
 
-long long ss[100001];
-long long save[100001];
-using namespace std;
-
+struct P4939 {
+  int a, b, c;
+};
+P4939 ss[400001];
+long long save[1000001];
 int main() {
   int n, m;
-  int a, b, c, d;
   cin >> n >> m;
-  for (int i = 1; i <= n; ++i) {
-    scanf("%d", ss + i);
-  }
-  tree.end = n;
-  tree.buildtree(1, 1, n, ss);
+  // for(int i=1;i<=n;++i){
+  //    scanf("%d",ss+i);
+  //}
+  int a, b, c;
+  int count = 0;
+  unordered_map<int, int> state;
   for (int i = 0; i < m; ++i) {
-    scanf("%d", &a);
-    if (a == 1) {
-      scanf("%d %d %d", &b, &c, &d);
-      tree.update(1, b, c, d);
-    } else if (a == 2) {
-      scanf("%d %d", &b, &c);
-      printf("%lld\n", tree.query(1, b, c));
+    scanf("%d", &ss[i].a);
+    save[count++] = ss[i].a;
+    if (ss[i].a) {
+      scanf("%d", &ss[i].b);
+      save[count++] = ss[i].b;
+    } else {
+      scanf("%d %d", &ss[i].b, &ss[i].c);
+      save[count++] = ss[i].b;
+      save[count++] = ss[i].c;
+    }
+  }
+  tree.end=count;
+  tree.buildtree(1, 1, count);
+
+  sort(save, save + count);
+  for (int i = 0; i < count; ++i) {
+    state[save[i]] = i;
+  }
+  for (int i = 0; i < m; ++i) {
+    if (ss[i].a) {
+      printf("%lld\n", tree.query(1, state[ss[i].b], state[ss[i].b]));
+    } else {
+      tree.update(1, state[ss[i].b], state[ss[i].c], 1);
     }
   }
   return 0;

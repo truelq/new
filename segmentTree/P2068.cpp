@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-// https://www.luogu.org/problem/P3372
+// https://www.luogu.org/problem/P2068
 // 线段树基础
 struct Node {
   int l, r;
@@ -66,29 +66,27 @@ struct Tree {//只包含一个区间和数据项
     }
   }
 } tree;
-
-long long ss[100001];
-long long save[100001];
 using namespace std;
 
-int main() {
-  int n, m;
-  int a, b, c, d;
-  cin >> n >> m;
-  for (int i = 1; i <= n; ++i) {
-    scanf("%d", ss + i);
-  }
-  tree.end = n;
-  tree.buildtree(1, 1, n, ss);
-  for (int i = 0; i < m; ++i) {
-    scanf("%d", &a);
-    if (a == 1) {
-      scanf("%d %d %d", &b, &c, &d);
-      tree.update(1, b, c, d);
-    } else if (a == 2) {
-      scanf("%d %d", &b, &c);
-      printf("%lld\n", tree.query(1, b, c));
+long long ss[100001];
+
+int main(){
+    int n,m;
+    cin>>n>>m;
+    tree.end=n;
+    tree.buildtree(1,1,n,ss);
+    
+    char a;
+    int b,c;
+    for(int i=0;i<m;++i){
+        scanf(" %c",&a);
+        scanf("%d %d",&b,&c);
+        if(a=='x'){
+            tree.update(1,b,b,c);
+        }else{
+            printf("%d\n",tree.query(1,b,c));
+        }
+
     }
-  }
-  return 0;
+    return 0;
 }

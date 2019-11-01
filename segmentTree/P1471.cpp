@@ -1,15 +1,17 @@
 #include <bits/stdc++.h>
-// https://www.luogu.org/problem/P3372
-// 线段树基础
+// https://www.luogu.org/problem/P1471
+//两个和，方差变换公式
+using namespace std;
 struct Node {
   int l, r;
   long long sum;
+  long long squr;
   long long inc;
 
   int mid() { return (l + r) >> 1; }
 };
-struct Tree {//只包含一个区间和数据项
-  Node tree[400004];//4n
+struct Tree {
+  Node tree[400004]; // 4n
   int root = 1;
   int end;
   void buildtree(int root, int l, int r, long long *ss) {
@@ -17,15 +19,19 @@ struct Tree {//只包含一个区间和数据项
     this->tree[root].r = r;
     if (l == r) {
       tree[root].sum = ss[l];
+      tree[root].squr = ss[l] * ss[l];
       return;
     }
     buildtree(root << 1, l, tree[root].mid(), ss);
     buildtree((root << 1) + 1, tree[root].mid() + 1, r, ss);
     tree[root].sum = tree[root << 1].sum + tree[(root << 1) + 1].sum;
+    tree[root].squr = tree[root << 1].squr + tree[(root << 1) + 1].squr;
   }
   void update(int root, int l, int r, long long k) {
     if (l == tree[root].l && r == tree[root].r) {
+      this->tree[root].squr += (k << 1) * tree[root].sum + (r - l + 1) * k * k;
       this->tree[root].sum += (r - l + 1) * k;
+
       this->tree[root].inc += k;
       return;
     }
@@ -39,6 +45,7 @@ struct Tree {//只包含一个区间和数据项
       update((root << 1) + 1, this->tree[root].mid() + 1, r, k);
     }
     this->tree[root].sum = tree[root << 1].sum + tree[(root << 1) + 1].sum;
+    this->tree[root].squr = tree[root << 1].squr + tree[(root << 1) + 1].squr;
   }
   long long query(int root, int l, int r) {
     if (l == tree[root].l && r == tree[root].r) {
@@ -56,6 +63,22 @@ struct Tree {//只包含一个区间和数据项
     }
     return ans;
   }
+  long long query1(int root, int l, int r) {
+    if (l == tree[root].l && r == tree[root].r) {
+      return tree[root].squr;
+    }
+    down(root);
+    long long ans = 0;
+    if (l > tree[root].mid()) {
+      ans = query1((root << 1) + 1, l, r);
+    } else if (r <= tree[root].mid()) {
+      ans = query1((root << 1), l, r);
+    } else {
+      ans = query1(root << 1, l, tree[root].mid()) +
+            query1((root << 1) + 1, tree[root].mid() + 1, r);
+    }
+    return ans;
+  }
   void down(int root) {
     if (tree[root].inc) {
       update(root << 1, tree[root << 1].l, tree[root << 1].r, tree[root].inc);
@@ -66,11 +89,7 @@ struct Tree {//只包含一个区间和数据项
     }
   }
 } tree;
-
 long long ss[100001];
-long long save[100001];
-using namespace std;
-
 int main() {
   int n, m;
   int a, b, c, d;
@@ -87,8 +106,11 @@ int main() {
       tree.update(1, b, c, d);
     } else if (a == 2) {
       scanf("%d %d", &b, &c);
-      printf("%lld\n", tree.query(1, b, c));
+      printf("lf\n", (double)tree.query(1, b, c) / (b - c + 1));
+    } else {
+      scanf("%d %d", &b, &c);
+      long long temp=tree.query(1,b,c);
+      printf("%lf",(double)tree.query1(1,b,c)-temp*temp);
     }
   }
-  return 0;
 }

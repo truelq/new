@@ -1,9 +1,11 @@
-#include <bits/stdc++.h>
-// https://www.luogu.org/problem/P3372
-// 线段树基础
+#include<bits/stdc++.h>
+//https://www.luogu.org/problem/P3865
+//最大值
+using namespace std;
+
 struct Node {
   int l, r;
-  long long sum;
+  long long maxs;
   long long inc;
 
   int mid() { return (l + r) >> 1; }
@@ -16,16 +18,15 @@ struct Tree {//只包含一个区间和数据项
     this->tree[root].l = l;
     this->tree[root].r = r;
     if (l == r) {
-      tree[root].sum = ss[l];
+      tree[root].maxs = ss[l];
       return;
     }
     buildtree(root << 1, l, tree[root].mid(), ss);
     buildtree((root << 1) + 1, tree[root].mid() + 1, r, ss);
-    tree[root].sum = tree[root << 1].sum + tree[(root << 1) + 1].sum;
+    tree[root].maxs = max(tree[root << 1].maxs , tree[(root << 1) + 1].maxs);
   }
   void update(int root, int l, int r, long long k) {
     if (l == tree[root].l && r == tree[root].r) {
-      this->tree[root].sum += (r - l + 1) * k;
       this->tree[root].inc += k;
       return;
     }
@@ -38,21 +39,21 @@ struct Tree {//只包含一个区间和数据项
       update(root << 1, l, this->tree[root].mid(), k);
       update((root << 1) + 1, this->tree[root].mid() + 1, r, k);
     }
-    this->tree[root].sum = tree[root << 1].sum + tree[(root << 1) + 1].sum;
+    this->tree[root].maxs = max(tree[root << 1].maxs, tree[(root << 1) + 1].maxs);
   }
   long long query(int root, int l, int r) {
     if (l == tree[root].l && r == tree[root].r) {
-      return tree[root].sum;
+      return tree[root].maxs;
     }
-    down(root);
+    //down(root);
     long long ans = 0;
     if (l > tree[root].mid()) {
       ans = query((root << 1) + 1, l, r);
     } else if (r <= tree[root].mid()) {
       ans = query((root << 1), l, r);
     } else {
-      ans = query(root << 1, l, tree[root].mid()) +
-            query((root << 1) + 1, tree[root].mid() + 1, r);
+      ans = max(query(root << 1, l, tree[root].mid()) ,
+            query((root << 1) + 1, tree[root].mid() + 1, r));
     }
     return ans;
   }
@@ -66,29 +67,19 @@ struct Tree {//只包含一个区间和数据项
     }
   }
 } tree;
-
 long long ss[100001];
-long long save[100001];
-using namespace std;
-
-int main() {
-  int n, m;
-  int a, b, c, d;
-  cin >> n >> m;
-  for (int i = 1; i <= n; ++i) {
-    scanf("%d", ss + i);
-  }
-  tree.end = n;
-  tree.buildtree(1, 1, n, ss);
-  for (int i = 0; i < m; ++i) {
-    scanf("%d", &a);
-    if (a == 1) {
-      scanf("%d %d %d", &b, &c, &d);
-      tree.update(1, b, c, d);
-    } else if (a == 2) {
-      scanf("%d %d", &b, &c);
-      printf("%lld\n", tree.query(1, b, c));
+int main(){
+    int n,m;
+    cin>>n>>m;
+    for(int i=1;i<=n;++i){
+        scanf("%d",ss+i);
     }
-  }
-  return 0;
+    tree.end=n;
+    tree.buildtree(1,1,n,ss);
+    int a,b;
+    for(int i=0;i<m;++i){
+        scanf("%d %d",&a,&b);
+        printf("%d\n",tree.query(1,a,b));
+    }
+    return 0;
 }

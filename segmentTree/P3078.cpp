@@ -1,6 +1,7 @@
-#include <bits/stdc++.h>
-// https://www.luogu.org/problem/P3372
-// 线段树基础
+#include<bits/stdc++.h>
+// 贪心
+//https://www.luogu.org/problem/P3078
+using namespace std;
 struct Node {
   int l, r;
   long long sum;
@@ -8,7 +9,7 @@ struct Node {
 
   int mid() { return (l + r) >> 1; }
 };
-struct Tree {//只包含一个区间和数据项
+struct Tree {
   Node tree[400004];//4n
   int root = 1;
   int end;
@@ -66,29 +67,43 @@ struct Tree {//只包含一个区间和数据项
     }
   }
 } tree;
-
-long long ss[100001];
-long long save[100001];
-using namespace std;
-
-int main() {
-  int n, m;
-  int a, b, c, d;
-  cin >> n >> m;
-  for (int i = 1; i <= n; ++i) {
-    scanf("%d", ss + i);
-  }
-  tree.end = n;
-  tree.buildtree(1, 1, n, ss);
-  for (int i = 0; i < m; ++i) {
-    scanf("%d", &a);
-    if (a == 1) {
-      scanf("%d %d %d", &b, &c, &d);
-      tree.update(1, b, c, d);
-    } else if (a == 2) {
-      scanf("%d %d", &b, &c);
-      printf("%lld\n", tree.query(1, b, c));
+long long ss[100000];
+int main(){
+    int n;
+    long long ans=0;
+    int temp;
+    scanf("%d",&n);
+    for(int i=1;i<=n;++i){
+        scanf("%d",ss+i);
+        temp=ss[i]-ss[i-1];
+        if(temp>0)
+        ans+=temp;
     }
-  }
-  return 0;
+    /*
+    tree.end=n;
+    tree.buildtree(1,1,n+1,ss);
+    int start=1;
+    int end=1;
+    int mins;
+    int temp;
+    
+    while(true){
+        while(!tree.query(1,start,start)&&start<=n){
+            start++;
+        }
+        if(start>n){
+            break;
+        }
+        end=start;
+        mins=0x7fffffff;
+        while(temp=tree.query(1,end,end)){
+            mins=min(temp,mins);
+            ++end;
+        }
+        tree.update(1,start,end-1,-mins);
+        ans+=mins;
+    }
+    */
+    cout<<ans<<endl;
+    return 0;
 }
