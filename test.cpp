@@ -1,13 +1,30 @@
-#include <stdio.h>
+#include <bits/stdc++.h>
+
+using namespace std;
+int save[1000001];
+int top;
+bool state[1000001], low[1000001];
 int main() {
-  double x, d;
-  double ans;
-  x=0;
-  for(x=0;x<2;x+=1e-6){
-    ans=(((3*x-4)*x-5)*x+13);
-    if(ans<=0){
-      printf("%lf:%lf\n",x,ans);
+  int l, r;
+  memset(low,1,sizeof(low));
+  for (int i = 2; i <= 0xffff; ++i) {
+    if (low[i]) {
+      save[++top] = i;
+    }
+    for (int j = 1; j <= top && i * save[j] <= 0x10000; ++j) {
+      low[i * save[j]] = 0;
+      if (i % save[j] == 0) {
+        break;
+      }
     }
   }
-  return 0;
+  while (scanf("%d %d", &l, &r)!=EOF) {
+    memset(state, 1, sizeof(state));
+
+    for(int i=1;i<=top;++i){
+      for(int j=l/save[i];j<=r/save[i];++j){
+
+      }
+    }
+  }
 }
