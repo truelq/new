@@ -1,92 +1,58 @@
-#define INFINITE 999999999 // Poj 1273 Drainage Ditches 的 Dinic算法
-int G[300][300];
-bool Visited[300];
-int Layer[300];
-int n, m; // 1是源点，m是汇点
-bool CountLayer() {
-  int layer = 0;
-  deque<int> q;
-  memset(Layer, 0xff, sizeof(Layer)); //都初始化成-1
-  Layer[1] = 0;
-  q.push_back(1);
-  while (!q.empty()) {
-    int v = q.front();
-    q.pop_front();
-    for (int j = 1; j <= m; j++) {
-      if (G[v][j] > 0 && Layer[j] == -1) { // Layer[j] == -1 说明j还没有访问过
-        Layer[j] = Layer[v] + 1;
-        if (j == m) //分层到汇点即可
-          return true;
-        else
-          q.push_back(j);
-      }
-    }
-  }
-  return false;
+#include<bits/stdc++.h>
+using namespace std;
+const int inf=1<<29,N=50010,M=300010;
+int head[N],ver[M],edge[M],Next[M],d[N];
+int n,m,s,t,tot,maxflow;
+queue<int> q;
+void add(int x,int y,int z){
+    ver[++tot]=y,edge[tot]=z,Next[tot]=head[x],head[x]=tot;
+    ver[++tot]=x,edge[tot]=0;Next[tot]=head[y],head[y]=tot;
 }
-int Dinic() {
-  int i;
-  int s;
-  int nMaxFlow = 0;
-  deque<int> q;          // DFS用的栈
-  while (CountLayer()) { //只要能分层
-    q.push_back(1);      //源点入栈
-    memset(Visited, 0, sizeof(Visited));
-    Visited[1] = 1;
-    while (!q.empty()) {
-      int nd = q.back();
-      if (nd == m) { // nd是汇点     //在栈中找容量最小边
-        int nMinC = INFINITE;
-        int nMinC_vs; //容量最小边的起点
-        for (i = 1; i < q.size(); i++) {
-          int vs = q[i - 1];
-          int ve = q[i];
-          if (G[vs][ve] > 0) {
-            if (nMinC > G[vs][ve]) {
-              nMinC = G[vs][ve];
-              nMinC_vs = vs;
+bool bfs(){//在参量网络上构造分层图
+    memset(d,0,sizeof(d));
+    while(q.size()) q.pop();
+    q.push(s);
+    d[s]=1;
+    while(q.size()){
+        int x=q.front();q.pop();
+        for(int i=head[x];i;i=Next[i]){
+            if(edge[i]&&!d[ver[i]]){
+                q.push(ver[i]);
+                d[ver[i]]=d[x]+1;
+                if(ver[i]==t) return 1;
             }
-          }
         }
-        //增广，改图
-        nMaxFlow += nMinC;
-        for (i = 1; i < q.size(); i++) {
-          int vs = q[i - 1];
-          int ve = q[i];
-          G[vs][ve] -= nMinC; //修改边容量
-          G[ve][vs] += nMinC; //添加反向边
-        }                     //退栈到 nMinC_vs成为栈顶，以便继续dfs
-        while (!q.empty() && q.back() != nMinC_vs) {
-          Visited[q.back()] = 0;
-          q.pop_back();
-        }
-
-      } else { // nd不是汇点
-        for (i = 1; i <= m; i++) {
-          if (G[nd][i] > 0 && Layer[i] == Layer[nd] + 1 &&
-              !Visited[i]) { //只往下一层的没有走过的节点走
-            Visited[i] = 1;
-            q.push_back(i);
-            break;
-          }
-        }
-        if (i > m)      //找不到下一个点
-          q.pop_back(); //回溯
-      }
     }
-  }
-  return nMaxFlow;
+    return 0;
 }
-int main() {
-  while (cin >> n >> m) {
-    int i, j, k;
-    int s, e, c;
-    memset(G, 0, sizeof(G));
-    for (i = 0; i < n; i++) {
-      cin >> s >> e >> c;
-      G[s][e] += c; //两点之间可能有多条边
+int dinic(int x,int flow){//当前分层图桑增广
+    if(x==t) return flow;
+    int rest=flow,k;
+    for(int i=head[x];i&&rest;i=Next[i]){
+        if(edge[i]&&d[ver[i]]==d[x]+1){
+            k=dinic(ver[i],min(rest,edge[i]));
+            if(!k) d[ver[i]]=0;//剪枝,去掉増广完毕的点
+            edge[i]-=k;
+            edge[i^1]+=k;
+            rest-=k;
+        }
     }
-    cout << Dinic() << endl;
-  }
-  return 0;
+    return flow-rest;
+}
+int main(){
+    cin>>n>>M;
+    cin>>s>>t;//源点,汇点
+    tot=1;
+    cin>>m1;
+    for(int i=1;i<=m1;++i){
+        int x,y,c;
+        scanf("%d%d",&x,&y,&c);
+        add(x,y,c);
+    }
+    int flow=0;
+    while(bfs()){
+        while(flow=dinic(s,inf)) maxflow+=flow;
+    }
+    cout<<maxflow<<endl;
+    return 0;
 }
