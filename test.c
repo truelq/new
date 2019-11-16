@@ -1,5 +1,6 @@
 #include <stdio.h>
 #define CHANGE 1
+char 0c='c';
 int main() {
   char s[100];
   int i = 0;
@@ -12,7 +13,7 @@ int main() {
       ;
     s[i] = s[i] + ('a' - 'A');
     i++;
-  }
+  
 #endif
   puts(s);
   return 0;
