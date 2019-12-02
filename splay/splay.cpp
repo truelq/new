@@ -3,8 +3,9 @@
 using namespace std;
 const int mm = 100050;
 const int INF = 0x7f7f7f7f;
-struct node {
-  int fa; //¸¸½Úµã
+struct node
+{
+  int fa; //çˆ¶èŠ‚ç‚¹
   int son[2];
   int sz;
   int val;
@@ -15,26 +16,28 @@ int tot;
 int a[mm];
 int n, m;
 #define get(x) (T[T[x].fa].son[1] == x)
-#define update(x)                                                              \
-  { T[x].sz = T[T[x].son[0]].sz + T[T[x].son[1]].sz + 1; } // 1±íÊ¾×Ô¼º
+#define update(x)                                        \
+  {                                                      \
+    T[x].sz = T[T[x].son[0]].sz + T[T[x].son[1]].sz + 1; \
+  } // 1è¡¨ç¤ºè‡ªå·±
 #define keyvalue T[T[root].son[1]].son[0]
-void updrev(int x) //½«ÀÁÈË±ê¼Ç×÷ÓÃÔÚX½Úµã£¬update
+void updrev(int x) //å°†æ‡’äººæ ‡è®°ä½œç”¨åœ¨XèŠ‚ç‚¹ï¼Œupdate
 {
   if (!x)
     return;
   swap(T[x].son[0], T[x].son[1]);
-  T[x].revtag ^= 1; //±ê¼Ç×öµ½´ËÎªÖ¹
+  T[x].revtag ^= 1; //æ ‡è®°åšåˆ°æ­¤ä¸ºæ­¢
 }
-void pushdown(int x) //ÏòÏÂ´«µİÀÁÈË±ê¼Ç
+void pushdown(int x) //å‘ä¸‹ä¼ é€’æ‡’äººæ ‡è®°
 {
-  if (T[x].revtag) //ÓĞÀÁÈË±ê¼Ç£¬±íÊ¾xµÄ×Ó½ÚµãÒÑ¾­½»»»£¬µ«ÊÇxµÄ×Ó½Úµã»¹Ã»ÓĞ
+  if (T[x].revtag) //æœ‰æ‡’äººæ ‡è®°ï¼Œè¡¨ç¤ºxçš„å­èŠ‚ç‚¹å·²ç»äº¤æ¢ï¼Œä½†æ˜¯xçš„å­èŠ‚ç‚¹è¿˜æ²¡æœ‰
   {
     updrev(T[x].son[0]);
     updrev(T[x].son[1]);
-    T[x].revtag = 0; //ÏÂ´«ºó£¬È¥µôxµÄÀÁÈË±ê¼Ç
+    T[x].revtag = 0; //ä¸‹ä¼ åï¼Œå»æ‰xçš„æ‡’äººæ ‡è®°
   }
 }
-void rotate(int x) //×óÓÒĞı
+void rotate(int x) //å·¦å³æ—‹
 {
   int which = get(x);
   int y = T[x].fa;
@@ -46,33 +49,34 @@ void rotate(int x) //×óÓÒĞı
   T[x].son[which ^ 1] = y;
   T[y].fa = x;
   T[x].fa = z;
-  if (z != 0) {
+  if (z != 0)
+  {
     T[z].son[T[z].son[1] == y] = x;
   }
   update(y);
   update(x);
 }
-void splay(int x, int goal) //½«½ÚµãxĞı³ÉgoalµÄ×Ó½Úµã
+void splay(int x, int goal) //å°†èŠ‚ç‚¹xæ—‹æˆgoalçš„å­èŠ‚ç‚¹
 {
   int fa = T[x].fa;
-  while (fa != goal) {
-    if (T[fa].fa !=
-        goal) //µ±T[fa].fa==goalÊ±£¬Ö»ĞèÒªĞıÒ»´Î¾Íµ½goalÏÂÁË£¬ËùÒÔÏÂÒ»²½¾Í²»±ØÒª×öÁË
-      rotate(get(x) == get(fa) ? fa : x);
+  while (fa != goal)
+  {
+    if (T[fa].fa !=goal) //å½“T[fa].fa==goalæ—¶ï¼Œåªéœ€è¦æ—‹ä¸€æ¬¡å°±åˆ°goalä¸‹äº†ï¼Œæ‰€ä»¥ä¸‹ä¸€æ­¥å°±ä¸å¿…è¦åšäº†
+    rotate(get(x) == get(fa) ? fa : x);
     rotate(x);
     fa = T[x].fa;
   }
   if (goal ==
-      0) // 0·½ÔÚÊı×éµÄµÚ0¸öÔªËØ£¬ÓÃÀ´±êÊ¶root£¬¼´T[x].fa==0,ÄÇÃ´¾Í±íÊ¾xÊÇrootÁË
+      0) // 0æ–¹åœ¨æ•°ç»„çš„ç¬¬0ä¸ªå…ƒç´ ï¼Œç”¨æ¥æ ‡è¯†rootï¼Œå³T[x].fa==0,é‚£ä¹ˆå°±è¡¨ç¤ºxæ˜¯rootäº†
     root =
-        x; // root²ÅÊÇÕû¿ÅÊ÷µÄ¸ù
-           // £¬ÒòÎªºóÃæÒªÓÃµ½rootÕâ¸ö±äÁ¿£¬ËùÒÔ£¬xµ½rootµÄÎ»ÖÃºó£¬Òª½«root¸ÄÎªx
+        x; // rootæ‰æ˜¯æ•´é¢—æ ‘çš„æ ¹
+           // ï¼Œå› ä¸ºåé¢è¦ç”¨åˆ°rootè¿™ä¸ªå˜é‡ï¼Œæ‰€ä»¥ï¼Œxåˆ°rootçš„ä½ç½®åï¼Œè¦å°†rootæ”¹ä¸ºx
 }
-int getkth(int x, int k) //¶ş·Ö·¨ÔÚÒÔxÎª¸ùµÄ×ÓÊ÷ÖĞ²éÕÒµÚk¸öÔªËØ
+int getkth(int x, int k) //äºŒåˆ†æ³•åœ¨ä»¥xä¸ºæ ¹çš„å­æ ‘ä¸­æŸ¥æ‰¾ç¬¬kä¸ªå…ƒç´ 
 {
   pushdown(x);
   int tt = T[T[x].son[0]].sz +
-           1; //×ó×ÓÊ÷½ÚµãÊı+1£¬±íÊ¾xÔÚ ÒÔxÎª¸ùµÄ×ÓÊ÷ÖĞµÄÎ»ÖÃ£¬±àºÅ´Ó1¿ªÊ¼
+           1; //å·¦å­æ ‘èŠ‚ç‚¹æ•°+1ï¼Œè¡¨ç¤ºxåœ¨ ä»¥xä¸ºæ ¹çš„å­æ ‘ä¸­çš„ä½ç½®ï¼Œç¼–å·ä»1å¼€å§‹
   if (tt == k)
     return x;
   if (tt > k)
@@ -80,27 +84,27 @@ int getkth(int x, int k) //¶ş·Ö·¨ÔÚÒÔxÎª¸ùµÄ×ÓÊ÷ÖĞ²éÕÒµÚk¸öÔªËØ
   if (tt < k)
     return getkth(
         T[x].son[1],
-        k - tt); //×¢ÒâÓÒ×ÓÊ÷µÄ±àºÅ»¹ÊÇ´Ó1¿ªÊ¼µÄ£¬ËùÒÔÖ»ĞèÒªÕÒk-ttÁË£¬Ç°tt¸öÊÇ×ó×ÓÊ÷ºÍ¸ù
+        k - tt); //æ³¨æ„å³å­æ ‘çš„ç¼–å·è¿˜æ˜¯ä»1å¼€å§‹çš„ï¼Œæ‰€ä»¥åªéœ€è¦æ‰¾k-ttäº†ï¼Œå‰ttä¸ªæ˜¯å·¦å­æ ‘å’Œæ ¹
 }
 int newnode(
     int fa, int v,
-    int which) //ÔÚfa½ÚµãµÄwhich(×ó»¹ÊÇÓÒ)Î»ÖÃ´´½¨ÖµÎªvµÄ×Ó½Úµã£¬²¢·µ»Ø¸Ã×Ó½Úµã
+    int which) //åœ¨faèŠ‚ç‚¹çš„which(å·¦è¿˜æ˜¯å³)ä½ç½®åˆ›å»ºå€¼ä¸ºvçš„å­èŠ‚ç‚¹ï¼Œå¹¶è¿”å›è¯¥å­èŠ‚ç‚¹
 {
   int x =
-      ++tot; //×¢ÒâÊÇÊı×é´æ´¢·½Ê½£¬tot±íÊ¾Êı×éÖĞÒÑ¾­´´½¨µÄ½Úµã¸öÊı£¬×¢Òâ0ºÅÎ»ÖÃ±£Áô
+      ++tot; //æ³¨æ„æ˜¯æ•°ç»„å­˜å‚¨æ–¹å¼ï¼Œtotè¡¨ç¤ºæ•°ç»„ä¸­å·²ç»åˆ›å»ºçš„èŠ‚ç‚¹ä¸ªæ•°ï¼Œæ³¨æ„0å·ä½ç½®ä¿ç•™
   T[x].fa = fa;
   T[x].son[0] = T[x].son[1] = 0;
   T[x].revtag = 0;
   T[x].val = v;
   T[x].sz = 1;
-  if (fa != 0) // 0ºÅÎ»ÖÃµÄ¶ù×Ó²»ĞèÒªÇø·Ö×óÓÒ
+  if (fa != 0) // 0å·ä½ç½®çš„å„¿å­ä¸éœ€è¦åŒºåˆ†å·¦å³
     T[fa].son[which] = x;
   return x;
 }
 
 int build(int fa, int l, int r,
-          int which) //¶ş·Ö·¨½«ĞòÁĞ×ª»¯³ÉsplayÊ÷ £¬ÕâÑù×îÆ½ºâ
-//Ã¿´ÎÔÚfaÏÂÃæÔö¼ÓÒ»¸ö½Úµã£¬Õâ¸ö½Úµã¾ÍÊÇÇø¼äµÄÖĞµã
+          int which) //äºŒåˆ†æ³•å°†åºåˆ—è½¬åŒ–æˆsplayæ ‘ ï¼Œè¿™æ ·æœ€å¹³è¡¡
+//æ¯æ¬¡åœ¨faä¸‹é¢å¢åŠ ä¸€ä¸ªèŠ‚ç‚¹ï¼Œè¿™ä¸ªèŠ‚ç‚¹å°±æ˜¯åŒºé—´çš„ä¸­ç‚¹
 {
   if (l > r)
     return 0;
@@ -108,40 +112,35 @@ int build(int fa, int l, int r,
   int x = newnode(fa, a[mid], which);
   build(x, l, mid - 1, 0);
   build(x, mid + 1, r, 1);
-  update(x); //×óÓÒ¶¼½¨Íêºó£¬xµÄsz¾Í»á·¢Éú¸Ä±ä£¬ËùÒÔÒªĞŞ¸Ä£¬Òª·Åµ½Á½¸öbuildÖ®ºó
+  update(x); //å·¦å³éƒ½å»ºå®Œåï¼Œxçš„szå°±ä¼šå‘ç”Ÿæ”¹å˜ï¼Œæ‰€ä»¥è¦ä¿®æ”¹ï¼Œè¦æ”¾åˆ°ä¸¤ä¸ªbuildä¹‹å
   return x;
 }
-void Init() {
-  tot = 0;
-  root = newnode(
-      0, -1, 0); //ÔÚ0ÏÂ½¨Ò»¸öÖµÎª-1µÄ½Úµã£¬ÔİÊ±½Ğroot ///////////0/////////////
-  int x = newnode(root, -1,
-                  1); //ÔÚrootÏÂ½¨Ò»¸öÖµÎª-1µÄÓÒ¶ù×Ó ///////////|/////////////
-  for (int i = 0; i < n; i++) //Ô­Ê¼Êı×é ///////////root(-1)//×óÉÚ±ø
-    a[i] = i + 1;             ///////////////\//////////
-  build(x, 0, n - 1,
-        0); //ÔÚxµÄ×ó¶ù×Ó½¨Õû¸öĞòÁĞ /////////////////son[1](-1)x//ÓÒÉÚ±ø
-  update(T[root].son[1]); //\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\
-    update(root);                                                   /////////Key_value(ĞòÁĞ)/////////
-}
-void addrevtag(int l, int r) //·´×ªĞòÁĞÇø¼ä[l,r] £¬±àºÅ´Ó1¿ªÊ¼
+void Init()//å·¦å“¨å…µå’Œå³å“¨å…µåˆ†åˆ«ä½äºæ•´ä¸ªåºåˆ—ä¸¤è¾¹
 {
-  int gl = getkth(
-      root,
-      l); //Ê÷ÖĞµÄµÚl¸öÔªËØ£¬Êµ¼ÊÉÏÊÇĞòÁĞÖĞµÄµÚl-1¸öÔªËØ£¨ÒòÎª¶àÁËÒ»¸ö×óÉÚ±ø£©
-  // cout<<gl<<endl;
-  int gr = getkth(root, r + 2); //Êµ¼ÊÊÇµÚr+1¸öÔªËØ
-  // cout<<gr<<endl;
-  splay(gl, 0); //°Ñl-1Ğıµ½root
-  // cout<<"ok"<<endl;
-  splay(gr, root); //°Ñr+1Ğıµ½rootµÄÓÒ¶ù×Ó
-  // cout<<"ok"<<endl;
-  updrev(
-      keyvalue); //ÄÇÃ´Key_valueµÄÎ»ÖÃ¾ÍÊÇÇø¼ä¡¾l,r¡¿,½«·­×ªÀÁÈË±ê¼Ç×÷ÓÃÔÚKey_valueÉÏ
-  update(T[root].son[1]); //±¾Ìâ´Ë´¦ÆäÊµÉ¶Ò²Ã»×ö
-  update(root);           //±¾Ìâ´Ë´¦ÆäÊµÉ¶Ò²Ã»×ö
+  tot = 0;
+  root = newnode(0, -1, 0);     //åœ¨0ä¸‹å»ºä¸€ä¸ªå€¼ä¸º-1çš„èŠ‚ç‚¹ï¼Œæš‚æ—¶å«root ///////////0/////////////
+  int x = newnode(root, -1, 1); //åœ¨rootä¸‹å»ºä¸€ä¸ªå€¼ä¸º-1çš„å³å„¿å­       ///////////|/////////////
+  for (int i = 0; i < n; i++)   //åŸå§‹æ•°ç»„                         ///////////root(-1)//å·¦å“¨å…µ
+    a[i] = i + 1;                                                     ///////////////\//////////
+  build(x, 0, n - 1, 0);        //åœ¨xçš„å·¦å„¿å­å»ºæ•´ä¸ªåºåˆ—             /////////////////son[1](-1)x//å³å“¨å…µ
+  update(T[root].son[1]);                                          //\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\//
+  update(root);                                                    /////////Key_value(åºåˆ—)/////////
 }
-void dfs(int x) //ÖĞĞò±éÀú
+void addrevtag(int l, int r) //åè½¬åºåˆ—åŒºé—´[l,r] ï¼Œç¼–å·ä»1å¼€å§‹
+{
+  int gl = getkth(root,l); //æ ‘ä¸­çš„ç¬¬lä¸ªå…ƒç´ ï¼Œå®é™…ä¸Šæ˜¯åºåˆ—ä¸­çš„ç¬¬l-1ä¸ªå…ƒç´ ï¼ˆå› ä¸ºå¤šäº†ä¸€ä¸ªå·¦å“¨å…µï¼‰
+  // cout<<gl<<endl;
+  int gr = getkth(root, r + 2); //å®é™…æ˜¯ç¬¬r+1ä¸ªå…ƒç´ 
+  // cout<<gr<<endl;
+  splay(gl, 0); //æŠŠl-1æ—‹åˆ°root
+  // cout<<"ok"<<endl;
+  splay(gr, root); //æŠŠr+1æ—‹åˆ°rootçš„å³å„¿å­
+  // cout<<"ok"<<endl;
+  updrev(keyvalue);          //é‚£ä¹ˆKey_valueçš„ä½ç½®å°±æ˜¯åŒºé—´ã€l,rã€‘,å°†ç¿»è½¬æ‡’äººæ ‡è®°ä½œç”¨åœ¨Key_valueä¸Š
+  update(T[root].son[1]); //æœ¬é¢˜æ­¤å¤„å…¶å®å•¥ä¹Ÿæ²¡åš
+  update(root);           //æœ¬é¢˜æ­¤å¤„å…¶å®å•¥ä¹Ÿæ²¡åš
+}
+void dfs(int x) //ä¸­åºéå†
 {
   pushdown(x);
   if (x == 0)
@@ -151,10 +150,12 @@ void dfs(int x) //ÖĞĞò±éÀú
     printf("%d ", T[x].val);
   dfs(T[x].son[1]);
 }
-int main() {
+int main()
+{
   scanf("%d%d", &n, &m);
   Init();
-  for (int i = 1; i <= m; i++) {
+  for (int i = 1; i <= m; i++)
+  {
     int l, r;
     scanf("%d%d", &l, &r);
     addrevtag(l, r);
