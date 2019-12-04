@@ -31,7 +31,7 @@ void topsort() {
   }
 }
 int main() {
-  freopen("C:\\Users\\32125\\Documents\\vscodec\\race3\\1\\data10.in","r",stdin);
+  freopen("C:\\Users\\32125\\Documents\\vscodec\\race3\\1\\data7.in","r",stdin);
   int temp;
   cin >> n >> k;
   for (int i = 1; i <= n; ++i) {
@@ -57,7 +57,7 @@ int main() {
       break;
     }
   }
-  save[temp] = k;
+  save[temp] = 1;
   long long tempa;
   //统计路径数
   for (int i = 1; i <= n; ++i) {
