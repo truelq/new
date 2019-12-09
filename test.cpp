@@ -1,61 +1,42 @@
-#include <bits/stdc++.h>
-
-int ss[101][101][201];
+//八皇后递归解法
+#include <iostream>
 using namespace std;
-int main() {
-  int n, m, i, j, k, t, ans = 0;
-  scanf("%d %d", &n, &m);
-  if (n < m) {
-    t = n;
-    n = m;
-    m = t;
+int queen[9] = {-1, -1, -1, -1, -1, -1, -1, -1, -1};
+int count = 0;
+bool available(int pointi, int pointj) { //判断某个皇后是否与已有皇后冲突
+  for (int i = 1; i < pointi; i++) {
+    if (pointj == queen[i])
+      return false; //同一列拒绝
+    if ((pointi - i) == (pointj - queen[i]))
+      return false; //同一主对角线拒绝
+    if ((pointi - i) + (pointj - queen[i]) == 0)
+      return false; //同一副对角线拒绝
   }
-  ss[1][m][0] = 1;
-  ss[1][m - 1][1] = m;
-  if (m >= 2)
-    ss[1][m - 2][2] = m * (m - 1) / 2;
-  for (i = 2; i <= n; i++) {
-    for (j = 0; j <= m; j++)
-      for (k = 0; k <= m - j; k++) {
-        ss[i][j][k] += ss[i - 1][j][k];
-        ss[i][j][k] %= 9999997;
-        if (j <= m - 1 && k >= 1) {
-          ss[i][j][k] += ss[i - 1][j + 1][k - 1] * (j + 1);
-          ss[i][j][k] %= 9999997;
+  return true;
+}
+void findSpace(int queenNumber) { //在第queenNumber行找能放皇后的位置
+  for (int i = 1; i < 9; i++) {   //从1~8遍历这一行的八个空位
+    if (available(queenNumber, i)) {
+      //如果可以放这个位置就记录下第queenNumber个皇后的位置
+      queen[queenNumber] = i;
+      if (queenNumber == 8) { //如果八个皇后都放满了统计一下
+        for (int i = 1; i <= 8; ++i) {
+          printf("%d ", queen[i]);
         }
-        if (k <= m - 1 && j + k + 1 <= m) {
-          ss[i][j][k] += ss[i - 1][j][k + 1] * (k + 1);
-          ss[i][j][k] %= 9999997;
-        }
-        if (j <= m - 2 && k >= 2 && m >= 2) {
-          if ((j + 1) % 2 == 0)
-            ss[i][j][k] +=
-                ((ss[i - 1][j + 2][k - 2] * (j + 2)) % 9999997) * (j + 1) / 2;
-          if ((j + 1) % 2 == 1)
-            ss[i][j][k] +=
-                ((ss[i - 1][j + 2][k - 2] * (j + 1)) % 9999997) * (j + 2) / 2;
-          ss[i][j][k] %= 9999997;
-        }
-        if (j <= m - 1 && m >= 2 && j + k + 1 <= m) {
-          ss[i][j][k] += ((ss[i - 1][j + 1][k] * (j + 1)) % 9999997) * k;
-          ss[i][j][k] %= 9999997;
-        }
-        if (k <= m - 2 && m >= 2 && j + k + 2 <= m) {
-          if ((k + 1) % 2 == 0)
-            ss[i][j][k] +=
-                ((ss[i - 1][j][k + 2] * (k + 2)) % 9999997) * (k + 1) / 2;
-          if ((k + 1) % 2 == 1)
-            ss[i][j][k] +=
-                ((ss[i - 1][j][k + 2] * (k + 1)) % 9999997) * (k + 2) / 2;
-          ss[i][j][k] %= 9999997;
-        }
+        cout << endl;
+        count++;
+        return;
       }
-  }
-  for (j = 0; j <= m; j++)
-    for (k = 0; k <= m - j; k++) {
-      ans += ss[n][j][k];
-      ans = ans % 9999997;
+      int nextNumber = queenNumber + 1; //还有皇后没放递归放下一个皇后
+      findSpace(nextNumber);
     }
-  printf("%d", ans);
+  }
+  queen[--queenNumber] =
+      -1; //如果这一行没有可放的位置说明上一行皇后放的位置不行，要为上一个皇后寻找新的可放位置
+  return;
+}
+int main() {
+  findSpace(1); //从（1，1）开始递归好理解
+  cout << count << endl;
   return 0;
 }
