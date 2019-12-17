@@ -1,5 +1,8 @@
 #include <bits/stdc++.h>
 #include <cmath>
+// https://www.luogu.com.cn/problem/P1991
+// 无线通讯网
+// 理解起来就是最小生成树,还是Kruskal
 using namespace std;
 // Kruskal
 struct P3366 {
