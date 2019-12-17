@@ -95,6 +95,7 @@ int main() {
   tree.buildtree(1, 1, 4000, states);
   sort(save + 1, save + count);
   int statecount = 1;
+  //离散化
   for (int i = 1; i < count; ++i) {
     state[save[i].y] = statecount;
     if (i + 1 < count) {
