@@ -56,37 +56,28 @@ void splay(int x, int goal) //将节点x旋成goal的子节点
 {
   int fa = T[x].fa;
   while (fa != goal) {
-    if (T[fa].fa !=
-        goal) //当T[fa].fa==goal时，只需要旋一次就到goal下了，所以下一步就不必要做了
+    if (T[fa].fa !=goal) //当T[fa].fa==goal时，只需要旋一次就到goal下了，所以下一步就不必要做了
       rotate(get(x) == get(fa) ? fa : x);
     rotate(x);
     fa = T[x].fa;
   }
-  if (goal ==
-      0) // 0方在数组的第0个元素，用来标识root，即T[x].fa==0,那么就表示x是root了
-    root =
-        x; // root才是整颗树的根，因为后面要用到root这个变量，所以，x到root的位置后，要将root改为x
+  if (goal ==0) // 0方在数组的第0个元素，用来标识root，即T[x].fa==0,那么就表示x是root了
+    root =x; // root才是整颗树的根，因为后面要用到root这个变量，所以，x到root的位置后，要将root改为x
 }
 int getkth(int x, int k) //二分法在以x为根的子树中查找第k个元素
 {
   pushdown(x);
-  int tt = T[T[x].son[0]].sz +
-           1; //左子树节点数+1，表示x在 以x为根的子树中的位置，编号从1开始
+  int tt = T[T[x].son[0]].sz +1; //左子树节点数+1，表示x在 以x为根的子树中的位置，编号从1开始
   if (tt == k)
     return x;
   if (tt > k)
     return getkth(T[x].son[0], k);
   if (tt < k)
-    return getkth(
-        T[x].son[1],
-        k - tt); //注意右子树的编号还是从1开始的，所以只需要找k-tt了，前tt个是左子树和根
+    return getkth(T[x].son[1],k - tt); //注意右子树的编号还是从1开始的，所以只需要找k-tt了，前tt个是左子树和根
 }
-int newnode(
-    int fa, int v,
-    int which) //在fa节点的which(左还是右)位置创建值为v的子节点，并返回该子节点
+int newnode(int fa, int v,int which) //在fa节点的which(左还是右)位置创建值为v的子节点，并返回该子节点
 {
-  int x =
-      ++tot; //注意是数组存储方式，tot表示数组中已经创建的节点个数，注意0号位置保留
+  int x =++tot; //注意是数组存储方式，tot表示数组中已经创建的节点个数，注意0号位置保留
   T[x].fa = fa;
   T[x].son[0] = T[x].son[1] = 0;
   T[x].revtag = 0;
@@ -139,11 +130,13 @@ void dfs(int x) //中序遍历
 }
 int main() {
   scanf("%d%d", &n, &m);
+
   tot = 0;
   root = newnode(0, -1, 0);     //左哨兵
   int x = newnode(root, -1, 1); //右哨兵
-  for (int i = 0; i < n; i++)
-    a[i] = i + 1;
+  for (int i = 1; i <= n; ++i) {
+    scanf("%d", a + i);
+  }
   build(x, 0, n - 1, 0);
   update(T[root].son[1]);
   update(root);
