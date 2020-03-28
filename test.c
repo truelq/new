@@ -1,10 +1,16 @@
 #include<stdio.h>
 
+static int g[1];
+static int *p=&g[0];
+static int *q=&g[0];
+
+int foo(void){
+    g[0]=1;
+    *p=0;
+    *p=*q;
+    return g[0];
+}
 int main(){
-    FILE *file=fopen("test.txt","wb");
-    char a=170;
-    for(int i=0;i<1024*10;++i){
-        fwrite(&a,1,1,file);
-    }
-    fclose(file);
+    printf("%d\n",foo());
+    return 0;
 }
